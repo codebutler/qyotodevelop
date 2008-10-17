@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<Template originator="Eric Butler" created="10/16/2008" lastModified="10/16/2008">
+	<!-- Template Header -->
+	<TemplateConfiguration>
+		<_Name>Empty Qyoto Project</_Name>
+		<_Category>C#</_Category>
+		<!-- <Icon>md-project|res:py-icon-32.png</Icon> -->
+		<LanguageName>C#</LanguageName>
+		<_Description>Creates an empty Qyoto C# solution.</_Description>
+	</TemplateConfiguration>
+	<!-- Template Content -->
+	<Combine name="${ProjectName}" directory=".">
+		<Options>
+			<StartupProject>${ProjectName}</StartupProject>
+		</Options>
+		<Project name="${ProjectName}" directory=".">
+			<References>
+				<Reference type="Gac" refto="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+				<Reference type="Gac" refto="qt-dotnet, Version=4.4.0.0, Culture=neutral, PublicKeyToken=194a23ba31c08164" />
+			</References>
+			<Files>
+				<FileTemplateReference TemplateID="CSharpAssemblyInfo" name="AssemblyInfo.cs" />
+				<QyotoForm className="MainWindow">
+					<ui version="4.0">
+						<class>Form</class>
+						<widget class="QWidget" name="MainWindow">
+							<property name="geometry">
+								<rect>
+									<x>0</x>
+									<y>0</y>
+									<width>400</width>
+									<height>300</height>
+								</rect>
+							</property>
+							<property name="windowTitle">
+								<string>Hello Qyoto!</string>
+							</property>
+						</widget>
+					</ui>
+					<QyotoCodeFile name="MainWindow.cs" AddStandardHeader="True">
+<![CDATA[using System;
+using Qyoto;
+
+public partial class MainWindow : ${BaseClass}
+{
+	public MainWindow()
+	{
+		SetupUi();
+	}
+}
+]]>
+					</QyotoCodeFile>
+				</QyotoForm>
+			</Files>
+		</Project>
+	</Combine>
+</Template>

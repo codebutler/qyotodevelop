@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QyotoDevelop", "QyotoDevelop\QyotoDevelop.csproj", "{65553231-F724-415E-8CE1-965B7B392CDD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{65553231-F724-415E-8CE1-965B7B392CDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65553231-F724-415E-8CE1-965B7B392CDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65553231-F724-415E-8CE1-965B7B392CDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65553231-F724-415E-8CE1-965B7B392CDD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		name = QyotoDevelop
+		version = 0.1
+		StartupItem = QyotoDevelop\QyotoDevelop.csproj
+	EndGlobalSection
+EndGlobal

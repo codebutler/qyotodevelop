@@ -1,0 +1,93 @@
+<Addin id          = "QyotoDevelop"
+       name        = "Qyoto for MonoDevelop"
+       namespace   = "MonoDevelop"
+       author      = "Eric Butler"
+       copyright   = "GPL"
+       url         = "http://www.extremeboredom.net"
+       description = "Qyoto (Qt) toolkit support"
+       category    = "Other"
+       version     = "0.1">
+
+    <Runtime>
+        <Import assembly = "QyotoDevelop.dll"/>
+    </Runtime>
+
+    <Dependencies>
+        <Addin id = "Core" version = "1.9.0"/>
+        <Addin id = "Core.Gui" version = "1.9.0"/>
+        <Addin id = "Projects" version = "1.9.0"/>
+        <Addin id = "Projects.Gui" version = "1.9.0"/>
+        <Addin id = "Ide" version = "1.9.0"/>
+        <Addin id = "Components" version = "1.9.0"/>
+        <Addin id="SourceEditor2" version="1.9.0"/>
+        <Addin id="DesignerSupport" version="1.9.0" />
+    </Dependencies>
+
+    <Extension path = "/MonoDevelop/Ide/ProjectTemplates">
+    	<ProjectTemplate
+    		id = "EmptyCSharpQyotoProject"
+    		resource = "EmptyCSharpQyotoProject.xpt.xml"/>
+    </Extension>
+
+	<Extension path="/MonoDevelop/Ide/ProjectFeatures">
+		<Class class="QyotoDevelop.QyotoProjectFeatures" />
+	</Extension>
+
+	<Extension path="/MonoDevelop/Ide/Pads/ProjectPad">
+		<NodeBuilder class="QyotoDevelop.ProjectNodeBuilder" />
+		<NodeBuilder class="QyotoDevelop.FormsFolderNodeBuilder" />
+		<NodeBuilder class="QyotoDevelop.FormNodeBuilder" />
+	</Extension>
+	
+	<Extension path = "/MonoDevelop/Ide/StartupHandlers">
+		<Class class="QyotoDevelop.QyotoStartupCommand" />
+	</Extension>
+	
+	<Extension path = "/MonoDevelop/ProjectModel/ExtendedProperties">
+		<ItemProperty class="MonoDevelop.Projects.Project"
+		               name="QyotoDesignInfo"
+		               type="QyotoDevelop.QyotoDesignInfo" />
+	</Extension>
+
+ 	<Extension path = "/MonoDevelop/ProjectModel/SerializableClasses">
+ 		<DataType class="QyotoDevelop.QyotoDesignInfo"/>
+ 	</Extension>
+
+	<Extension path="/MonoDevelop/DesignerSupport/PropertyProviders" extension-nodes="Class">
+		<Class class="QyotoDevelop.QyotoFormPropertyProvider" />
+	</Extension>
+
+	<Extension path="/MonoDevelop/Ide/FileTemplateTypes">
+		<FileTemplateType name="QyotoForm" class="QyotoDevelop.QyotoFormFileDescriptionTemplate" />
+		<FileTemplateType name="QyotoCodeFile" class="QyotoDevelop.QyotoCodeFileDescriptionTemplate" />
+	</Extension>
+
+
+				<!--
+  	<Extension path = "/MonoDevelop/ProjectModel/Gui/ItemOptionPanels/Build">
+		<Condition id="ItemType" value="PyBinding.PythonProject">
+			<Section
+				id          = "PythonOptionsPanel"
+	            _label      = "Python Options"
+	            insertafter = "Compile"
+	            class       = "PyBinding.Gui.OutputOptionsPanel"/>
+		</Condition>
+	</Extension>
+
+  	<Extension path = "/MonoDevelop/ProjectModel/SerializableClasses">
+        <DataType class = "PyBinding.PythonProject"/>
+        <DataType class = "PyBinding.PythonConfiguration"/>
+        <DataType class = "PyBinding.Runtime.Python25Runtime"/>
+        <DataType class = "PyBinding.Compiler.Python25Compiler"/>
+    </Extension>
+
+	<Extension path = "/MonoDevelop/Ide/Pads/ClassPad">
+		<NodeBuilder id = "PyBinding.Gui.Navigation.ProjectNodeBuilderExtension" class = "PyBinding.Gui.Navigation.ProjectNodeBuilderExtension" />
+		<NodeBuilder id = "PyBinding.Gui.Navigation.PackagesNodeBuilder" class = "PyBinding.Gui.Navigation.PackagesNodeBuilder" />
+		<NodeBuilder id = "PyBinding.Gui.Navigation.PackageNodeBuilder" class = "PyBinding.Gui.Navigation.PackageNodeBuilder" />
+		<NodeBuilder id = "PyBinding.Gui.Navigation.ClassNodeBuilder" class = "PyBinding.Gui.Navigation.ClassNodeBuilder" />
+		<NodeBuilder id = "PyBinding.Gui.Navigation.AttributeNodeBuilder" class = "PyBinding.Gui.Navigation.AttributeNodeBuilder" />
+		<NodeBuilder id = "PyBinding.Gui.Navigation.FunctionNodeBuilder" class = "PyBinding.Gui.Navigation.FunctionNodeBuilder" />
+	</Extension>
+	-->
+</Addin>
