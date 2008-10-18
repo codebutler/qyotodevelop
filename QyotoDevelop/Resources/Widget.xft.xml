@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<Template originator="Eric Butler" created="10/17/2008" lastModified="10/17/2008">
+	<TemplateConfiguration>
+		<_Name>Widget</_Name>
+		<Icon>md-gui-file</Icon>
+		<_Category>Qyoto</_Category>
+		<LanguageName>*</LanguageName>
+		<_Description>Creates a Qyoto widget. Can be used as a top-level window, too.</_Description>
+	</TemplateConfiguration>
+	<Conditions>
+		<PartialTypeSupport Requirement="Enabled" />
+	</Conditions>
+	<TemplateFiles>
+		<QyotoForm DefaultName="${Name}">
+			<ui version="4.0">
+				<class>Form</class>
+				<widget class="QWidget" name="${Name}">
+					<property name="geometry">
+						<rect>
+							<x>0</x>
+							<y>0</y>
+							<width>400</width>
+							<height>300</height>
+						</rect>
+					</property>
+					<property name="windowTitle">
+						<string>${Name}</string>
+					</property>
+				</widget>
+			</ui>
+			<File AddStandardHeader="True"><![CDATA[using System;
+using Qyoto;
+
+public partial class ${Name} : QWidget
+{
+	public ${Name} ()
+	{
+		SetupUi();
+	}
+}
+]]></File>
+		</QyotoForm>
+	</TemplateFiles>
+</Template>

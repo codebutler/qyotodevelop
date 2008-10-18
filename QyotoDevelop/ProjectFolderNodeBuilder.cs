@@ -1,4 +1,4 @@
-// AssemblyInfo.cs
+// ProjectFolderNodeBuilder.cs
 //
 // Copyright (c) 2008 Eric Butler <eric@extremeboredom.net>
 //
@@ -20,28 +20,41 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System.Reflection;
-using System.Runtime.CompilerServices;
+using System;
 
-// Information about this assembly is defined by the following attributes. 
-// Change them to the values specific to your project.
+using MonoDevelop.Projects;
+using MonoDevelop.Core;
+using MonoDevelop.Ide.Gui.Pads;
+using MonoDevelop.Ide.Gui;
+using MonoDevelop.Ide.Gui.Components;
+using MonoDevelop.Ide.Gui.Pads.ProjectPad;
 
-[assembly: AssemblyTitle("QyotoDevelop")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+namespace QyotoDevelop
+{
+	public class ProjectFolderNodeBuilder : NodeBuilderExtension
+	{
+		public override bool CanBuildNode (Type dataType)
+		{
+			return typeof(ProjectFolder).IsAssignableFrom (dataType) ||
+			       typeof(DotNetProject).IsAssignableFrom (dataType);
+		}
+		
+		public override Type CommandHandlerType {
+			get { return typeof(QyotoCommandHandler); }
+		}
+		
+		public override void GetNodeAttributes (ITreeNavigator treeNavigator, object dataObject, ref NodeAttributes attributes)
+		{
+			if (treeNavigator.Options ["ShowAllFiles"])
+				return;
 
-// The assembly version has the format "{Major}.{Minor}.{Build}.{Revision}".
-// If the build and revision are set to '*' they will be updated automatically.
+			ProjectFolder folder = dataObject as ProjectFolder;
+			if (folder != null && folder.Project is DotNetProject) {
+				QyotoDesignInfo info = QyotoDesignInfo.FromProject(folder.Project);
+				if (info.QtGuiFolder == folder.Path)
+					attributes |= NodeAttributes.Hidden;
+			}
+		}
+	}
 
-[assembly: AssemblyVersion("1.0.*.*")]
-
-// The following attributes are used to specify the signing key for the assembly, 
-// if desired. See the Mono documentation for more information about signing.
-
-[assembly: AssemblyDelaySign(false)]
-[assembly: AssemblyKeyFile("")]
+}

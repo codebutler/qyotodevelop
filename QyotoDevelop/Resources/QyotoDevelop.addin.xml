@@ -23,6 +23,14 @@
         <Addin id="DesignerSupport" version="1.9.0" />
     </Dependencies>
 
+	<ExtensionPoint path="/QyotoDevelop/ContextMenu/ProjectPad/FormsFolder">
+		<ExtensionNodeSet id="MonoDevelop.Components.Commands.ItemSet" />
+	</ExtensionPoint>
+
+	<ExtensionPoint path="/QyotoDevelop/ContextMenu/ProjectPad/Form">
+		<ExtensionNodeSet id="MonoDevelop.Components.Commands.ItemSet" />
+	</ExtensionPoint>
+
     <Extension path = "/MonoDevelop/Ide/ProjectTemplates">
     	<ProjectTemplate
     		id = "EmptyCSharpQyotoProject"
@@ -35,8 +43,9 @@
 
 	<Extension path="/MonoDevelop/Ide/Pads/ProjectPad">
 		<NodeBuilder class="QyotoDevelop.ProjectNodeBuilder" />
-		<NodeBuilder class="QyotoDevelop.FormsFolderNodeBuilder" />
-		<NodeBuilder class="QyotoDevelop.FormNodeBuilder" />
+		<NodeBuilder class="QyotoDevelop.ProjectFolderNodeBuilder" />
+		<NodeBuilder class="QyotoDevelop.QyotoFormsFolderNodeBuilder" />
+		<NodeBuilder class="QyotoDevelop.QyotoFormNodeBuilder" />
 	</Extension>
 	
 	<Extension path = "/MonoDevelop/Ide/StartupHandlers">
@@ -59,35 +68,62 @@
 
 	<Extension path="/MonoDevelop/Ide/FileTemplateTypes">
 		<FileTemplateType name="QyotoForm" class="QyotoDevelop.QyotoFormFileDescriptionTemplate" />
-		<FileTemplateType name="QyotoCodeFile" class="QyotoDevelop.QyotoCodeFileDescriptionTemplate" />
+	</Extension>
+
+	<Extension path="/MonoDevelop/Ide/FileTemplates">
+		<FileTemplate id="QMainWindowFileTemplate" resource="MainWindow.xft.xml" />
+		<FileTemplate id="QDialogFileTemplate" resource="Dialog.xft.xml" />
+		<FileTemplate id="QWidgetFileTemplate" resource="Widget.xft.xml" />
 	</Extension>
 
 
-				<!--
-  	<Extension path = "/MonoDevelop/ProjectModel/Gui/ItemOptionPanels/Build">
-		<Condition id="ItemType" value="PyBinding.PythonProject">
-			<Section
-				id          = "PythonOptionsPanel"
-	            _label      = "Python Options"
-	            insertafter = "Compile"
-	            class       = "PyBinding.Gui.OutputOptionsPanel"/>
-		</Condition>
+	<Extension path="/MonoDevelop/Ide/Commands">
+		<Category _name="QyotoDevelop" id="QyotoDevelop">
+			<Command id="QyotoDevelop.Commands.AddNewMainWindow"
+			         icon="md-gtkcore-window" 
+			         _label="New Main Window..." />
+
+			<Command id="QyotoDevelop.Commands.AddNewDialog"
+			         icon="md-gtkcore-dialog" 
+			         _label="New Dialog..." />
+			         
+			<Command id="QyotoDevelop.Commands.AddNewWidget"
+			         icon="md-gtkcore-widget" 
+			         _label="New Widget..." />
+
+			<Command id="QyotoDevelop.Commands.OpenInDesigner"
+				_label="Open in Designer" />
+		</Category>
 	</Extension>
 
-  	<Extension path = "/MonoDevelop/ProjectModel/SerializableClasses">
-        <DataType class = "PyBinding.PythonProject"/>
-        <DataType class = "PyBinding.PythonConfiguration"/>
-        <DataType class = "PyBinding.Runtime.Python25Runtime"/>
-        <DataType class = "PyBinding.Compiler.Python25Compiler"/>
-    </Extension>
-
-	<Extension path = "/MonoDevelop/Ide/Pads/ClassPad">
-		<NodeBuilder id = "PyBinding.Gui.Navigation.ProjectNodeBuilderExtension" class = "PyBinding.Gui.Navigation.ProjectNodeBuilderExtension" />
-		<NodeBuilder id = "PyBinding.Gui.Navigation.PackagesNodeBuilder" class = "PyBinding.Gui.Navigation.PackagesNodeBuilder" />
-		<NodeBuilder id = "PyBinding.Gui.Navigation.PackageNodeBuilder" class = "PyBinding.Gui.Navigation.PackageNodeBuilder" />
-		<NodeBuilder id = "PyBinding.Gui.Navigation.ClassNodeBuilder" class = "PyBinding.Gui.Navigation.ClassNodeBuilder" />
-		<NodeBuilder id = "PyBinding.Gui.Navigation.AttributeNodeBuilder" class = "PyBinding.Gui.Navigation.AttributeNodeBuilder" />
-		<NodeBuilder id = "PyBinding.Gui.Navigation.FunctionNodeBuilder" class = "PyBinding.Gui.Navigation.FunctionNodeBuilder" />
+	
+	<Extension path = "/MonoDevelop/Ide/ContextMenu/ProjectPad/Project/Add">
+		<SeparatorItem insertafter = "MonoDevelop.Ide.Commands.ProjectCommands.AddFiles" />
+		<CommandItem id="QyotoDevelop.Commands.AddNewMainWindow" />
+		<CommandItem id="QyotoDevelop.Commands.AddNewDialog" />
+		<CommandItem id="QyotoDevelop.Commands.AddNewWidget" />
 	</Extension>
-	-->
+
+	<Extension path = "/MonoDevelop/Ide/ContextMenu/ProjectPad/Folder/Add">
+		<SeparatorItem insertafter = "MonoDevelop.Ide.Commands.ProjectCommands.AddFiles" />
+		<CommandItem id="QyotoDevelop.Commands.AddNewMainWindow" />
+		<CommandItem id="QyotoDevelop.Commands.AddNewDialog" />
+		<CommandItem id="QyotoDevelop.Commands.AddNewWidget" />
+	</Extension>
+	
+	<Extension path="/QyotoDevelop/ContextMenu/ProjectPad/FormsFolder">
+		<CommandItem id="QyotoDevelop.Commands.AddNewMainWindow" />
+		<CommandItem id="QyotoDevelop.Commands.AddNewDialog" />
+		<CommandItem id="QyotoDevelop.Commands.AddNewWidget" />
+	</Extension>
+	
+	<Extension path = "/QyotoDevelop/ContextMenu/ProjectPad/Form">
+		<CommandItem id = "MonoDevelop.Ide.Commands.ViewCommands.Open" />
+		<CommandItem id = "QyotoDevelop.Commands.OpenInDesigner" />
+		<CommandItem id = "MonoDevelop.Ide.Commands.EditCommands.Delete" />
+	</Extension>
+
+	<Extension path="/MonoDevelop/ProjectModel/ProjectServiceExtensions">
+		<Class class="QyotoDevelop.QyotoProjectServiceExtension" insertafter="MidStep"/>
+	</Extension>
 </Addin>

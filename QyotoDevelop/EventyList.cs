@@ -1,4 +1,4 @@
-// AssemblyInfo.cs
+// EventyList.cs
 //
 // Copyright (c) 2008 Eric Butler <eric@extremeboredom.net>
 //
@@ -20,28 +20,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System.Reflection;
-using System.Runtime.CompilerServices;
 
-// Information about this assembly is defined by the following attributes. 
-// Change them to the values specific to your project.
+using System;
+using System.Collections.Generic;
+	
+namespace QyotoDevelop
+{	
+	public class EventyList<T> : List<T>
+	{
+		public delegate void EventyListItemEventHandler(object o, T item);
+		public event EventyListItemEventHandler ItemAdded;
+		public event EventyListItemEventHandler ItemRemoved;
+	
+		public new void Add (T item)
+		{
+			base.Add(item);
+			if (ItemAdded != null)
+				ItemAdded(this, item);
+		}
 
-[assembly: AssemblyTitle("QyotoDevelop")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-
-// The assembly version has the format "{Major}.{Minor}.{Build}.{Revision}".
-// If the build and revision are set to '*' they will be updated automatically.
-
-[assembly: AssemblyVersion("1.0.*.*")]
-
-// The following attributes are used to specify the signing key for the assembly, 
-// if desired. See the Mono documentation for more information about signing.
-
-[assembly: AssemblyDelaySign(false)]
-[assembly: AssemblyKeyFile("")]
+		public new bool Remove (T item)
+		{
+			bool r = base.Remove(item);
+			if (ItemRemoved != null)
+				ItemRemoved(this, item);
+			return r;
+		}
+	}
+}

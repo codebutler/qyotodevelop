@@ -2,11 +2,10 @@
 <Template originator="Eric Butler" created="10/16/2008" lastModified="10/16/2008">
 	<!-- Template Header -->
 	<TemplateConfiguration>
-		<_Name>Empty Qyoto Project</_Name>
+		<_Name>Qyoto Project</_Name>
 		<_Category>C#</_Category>
-		<!-- <Icon>md-project|res:py-icon-32.png</Icon> -->
 		<LanguageName>C#</LanguageName>
-		<_Description>Creates an empty Qyoto C# solution.</_Description>
+		<_Description>Creates a Qyoto C# project.</_Description>
 	</TemplateConfiguration>
 	<!-- Template Content -->
 	<Combine name="${ProjectName}" directory=".">
@@ -20,7 +19,7 @@
 			</References>
 			<Files>
 				<FileTemplateReference TemplateID="CSharpAssemblyInfo" name="AssemblyInfo.cs" />
-				<QyotoForm className="MainWindow">
+				<QyotoForm>
 					<ui version="4.0">
 						<class>Form</class>
 						<widget class="QWidget" name="MainWindow">
@@ -37,19 +36,19 @@
 							</property>
 						</widget>
 					</ui>
-					<QyotoCodeFile name="MainWindow.cs" AddStandardHeader="True">
+					<File name="MainWindow.cs" AddStandardHeader="True">
 <![CDATA[using System;
 using Qyoto;
 
-public partial class MainWindow : ${BaseClass}
+public partial class MainWindow : QWidget
 {
-	public MainWindow()
+	public MainWindow ()
 	{
 		SetupUi();
 	}
 }
 ]]>
-					</QyotoCodeFile>
+					</File>
 				</QyotoForm>
 			</Files>
 		</Project>

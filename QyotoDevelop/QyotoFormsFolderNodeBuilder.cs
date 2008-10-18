@@ -1,4 +1,4 @@
-// ProjectNodeBuilder.cs
+// QyotoFormsFolderNodeBuilder.cs
 //
 // Copyright (c) 2008 Eric Butler <eric@extremeboredom.net>
 //
@@ -24,56 +24,59 @@ using System;
 
 using MonoDevelop.Projects;
 using MonoDevelop.Core;
+using MonoDevelop.Core.Gui;
 using MonoDevelop.Ide.Gui.Pads;
+using MonoDevelop.Components.Commands;
 using MonoDevelop.Ide.Gui;
+using MonoDevelop.Ide.Commands;
+using MonoDevelop.Ide.Gui.Pads.ProjectPad;
 using MonoDevelop.Ide.Gui.Components;
 
 namespace QyotoDevelop
 {
-	public class ProjectNodeBuilder : NodeBuilderExtension
+	public class QyotoFormsFolderNodeBuilder : TypeNodeBuilder
 	{
-		static ProjectNodeBuilder instance;
+		public QyotoFormsFolderNodeBuilder()
+		{
+		}
 
-		public override bool CanBuildNode (Type dataType)
-		{
-			return typeof(DotNetProject).IsAssignableFrom (dataType);
+		public override Type CommandHandlerType {
+			get { return typeof(QyotoCommandHandler); }
 		}
-		
-		protected override void Initialize ()
+	
+		public override string GetNodeName (ITreeNavigator thisNode, object dataObject)
 		{
-			lock (typeof (ProjectNodeBuilder))
-				instance = this;
+			return "QtForms";
 		}
-		
-		public override void Dispose ()
+
+		public override void BuildNode (ITreeBuilder treeBuilder, object dataObject, ref string label, ref Gdk.Pixbuf icon, ref Gdk.Pixbuf closedIcon)
 		{
-			lock (typeof (ProjectNodeBuilder))
-				instance = null;
+			label = "Qt Forms";
+			icon = Context.GetIcon (Stock.OpenResourceFolder);
+			closedIcon = Context.GetIcon (Stock.ClosedResourceFolder);
 		}
-		
+
 		public override void BuildChildNodes (ITreeBuilder builder, object dataObject)
 		{
-			Project project = (Project)dataObject;
-			if (Util.SupportsDesigner(project)) {
-				QyotoDesignInfo designInfo = (QyotoDesignInfo)project.ExtendedProperties["QyotoDesignInfo"];
-				if (designInfo == null) throw new InvalidOperationException("designInfo cant be null");
-				builder.AddChild(designInfo);
+			QyotoDesignInfo info = (QyotoDesignInfo)dataObject;
+			foreach (QyotoForm form in info.Forms) {
+				builder.AddChild(form);
+			}
+		}
+		
+		public override Type NodeDataType {
+			get {
+				return typeof(QyotoDesignInfo);
 			}
 		}
 
-		// XXX: This currently has to be manually called any time 
-		// QyotoDesignInfo.Files changes. That should be done automatically.
-		public static void FilesChanged (Project p)
+		public override bool HasChildNodes (ITreeBuilder builder, object dataObject)
 		{
-			if (p == null)
-				throw new ArgumentNullException("p");
-			
-			if (instance == null)
-				return;
-
-			ITreeBuilder tb = instance.Context.GetTreeBuilder (p);
-			if (tb != null)
-				tb.UpdateAll ();
-		}	
+			return true;
+		}
+		
+		public override string ContextMenuAddinPath {
+			get { return "/QyotoDevelop/ContextMenu/ProjectPad/FormsFolder"; }
+		}
 	}
 }

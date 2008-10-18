@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<Template originator="Eric Butler" created="10/17/2008" lastModified="10/17/2008">
+	<TemplateConfiguration>
+		<_Name>MainWindow</_Name>
+		<Icon>md-gui-file</Icon>
+		<_Category>Qyoto</_Category>
+		<LanguageName>*</LanguageName>
+		<_Description>Creates a Qyoto MainWindow, which is a top-level window with a menubar and statusbar.</_Description>
+	</TemplateConfiguration>
+	<Conditions>
+		<PartialTypeSupport Requirement="Enabled" />
+	</Conditions>
+	<TemplateFiles>
+		<QyotoForm DefaultName="${Name}">
+			<ui version="4.0">
+				<class>MainWindow</class>
+				<widget class="QMainWindow" name="${Name}">
+					<property name="geometry">
+						<rect>
+							<x>0</x>
+							<y>0</y>
+							<width>800</width>
+							<height>600</height>
+						</rect>
+					</property>
+					<property name="windowTitle">
+						<string>${Name}</string>
+					</property>
+					<widget class="QWidget" name="centralwidget" />
+					<widget class="QMenuBar" name="menubar">
+						<property name="geometry">
+							<rect>
+								<x>0</x>
+								<y>0</y>
+								<width>800</width>
+								<height>23</height>
+							</rect>
+						</property>
+					</widget>
+					<widget class="QStatusBar" name="statusbar" />
+				</widget>
+				<resources />
+				<connections />
+			</ui>
+			<File AddStandardHeader="True"><![CDATA[using System;
+using Qyoto;
+
+public partial class ${Name} : QMainWindow
+{
+	public ${Name}()
+	{
+		SetupUi();
+	}
+}
+]]></File>
+		</QyotoForm>
+	</TemplateFiles>
+</Template>
