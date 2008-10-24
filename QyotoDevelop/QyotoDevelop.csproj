@@ -87,6 +87,7 @@
     <Compile Include="ProjectFolderNodeBuilder.cs" />
     <Compile Include="EventyList.cs" />
     <Compile Include="QyotoProjectServiceExtension.cs" />
+    <Compile Include="QyotoCodeGenerator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

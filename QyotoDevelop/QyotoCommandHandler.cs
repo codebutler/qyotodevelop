@@ -40,18 +40,36 @@ namespace QyotoDevelop
 			AddNewWindow("QDialogFileTemplate");
 		}
 
+		[CommandUpdateHandler(QyotoDevelop.Commands.AddNewDialog)]
+		public void UpdateAddNewDialogToProject(CommandInfo cinfo)
+		{
+			cinfo.Visible = CanAddWindow();
+		}
+		
 		[CommandHandler(QyotoDevelop.Commands.AddNewMainWindow)]
 		public void AddNewMainWindowToProject()
 		{
 			AddNewWindow("QMainWindowFileTemplate");
 		}
 
+		[CommandUpdateHandler(QyotoDevelop.Commands.AddNewMainWindow)]
+		public void UpdateAddNewMainWindowToProject(CommandInfo cinfo)
+		{
+			cinfo.Visible = CanAddWindow();
+		}
+		
 		[CommandHandler(QyotoDevelop.Commands.AddNewWidget)]
 		public void AddNewWidgetToProject()
 		{
 			AddNewWindow("QWidgetFileTemplate");
 		}
-
+		
+		[CommandUpdateHandler(QyotoDevelop.Commands.AddNewWidget)]
+		public void UpdateAddNewWidgetToProject(CommandInfo cinfo)
+		{
+			cinfo.Visible = CanAddWindow();
+		}
+		
 		// XXX: Can this be moved into monodevelop? AddFileFromTemplate or something.
 		private void AddNewWindow (string id)
 		{
@@ -77,6 +95,11 @@ namespace QyotoDevelop
 			if (nav != null)
 				nav.Expanded = true;
 		}
-		
+
+		private bool CanAddWindow ()
+		{
+			DotNetProject project = CurrentNode.GetParentDataItem(typeof(Project), true) as DotNetProject;
+			return Util.SupportsDesigner(project);
+		}
 	}
 }

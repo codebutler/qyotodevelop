@@ -38,6 +38,17 @@ namespace QyotoDevelop
 			m_Form = form;
 		}
 
+		[DisplayName("Namespace")]
+		[Description("")]
+		public string Namespace {
+			get {
+				return m_Form.Namespace;
+			}
+			set {
+				m_Form.Namespace = value;
+			}
+		}
+		
 		[DisplayName("UI File Name")]
 		[Description("")]
 		public string UiFileName {
@@ -45,13 +56,20 @@ namespace QyotoDevelop
 				return m_Form.UiFileName;
 			}
 		}
-
 		
 		[DisplayName("Class Name")]
 		[Description("")]
 		public string ClassName {
 			get {
 				return m_Form.ClassName;
+			}
+		}
+
+		[DisplayName("Base Type")]
+		[Description("")]
+		public string BaseTypeName {
+			get {
+				return m_Form.BaseTypeName;
 			}
 		}
 	}

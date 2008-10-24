@@ -41,6 +41,8 @@ namespace QyotoDevelop
 	{
 		string m_ClassName;
 		string m_UiFileName;
+		string m_BaseTypeName;
+		string m_Namespace;
 		DotNetProject m_Project;
 		
 		public QyotoForm()
@@ -89,6 +91,12 @@ namespace QyotoDevelop
 			}
 		}
 
+		public string BaseTypeName {
+			get {
+				return m_BaseTypeName;
+			}
+		}
+
 		public string SourceCodeFile {
 			get {
 				string guiFolder = QyotoDesignInfo.FromProject(m_Project).QtGuiFolder;
@@ -106,6 +114,12 @@ namespace QyotoDevelop
 			get {
 				string guiFolder = QyotoDesignInfo.FromProject(m_Project).QtGuiFolder;
 				return Path.Combine(guiFolder, m_Project.LanguageBinding.GetFileName(m_ClassName));
+			}
+		}
+
+		public string UiFile {
+			get {
+				return Path.Combine(QyotoDesignInfo.FromProject(m_Project).QtGuiFolder, m_UiFileName);
 			}
 		}
 		
@@ -129,6 +143,19 @@ namespace QyotoDevelop
 				ParseFile();
 			}
 		}
+		
+		[ItemProperty("Namespace")]
+		public string Namespace {
+			get {
+				return m_Namespace;
+			}
+			set {
+				m_Namespace = value;
+				
+				if (m_Project != null)
+					IdeApp.ProjectOperations.Save(m_Project);
+			}
+		}
 
 		public void ParseFile()
 		{
@@ -144,6 +171,7 @@ namespace QyotoDevelop
 				XmlDocument doc = new XmlDocument();
 				doc.Load(stream);
 				m_ClassName = doc.SelectSingleNode("/ui/widget").Attributes["name"].Value;
+				m_BaseTypeName = doc.SelectSingleNode("/ui/widget").Attributes["class"].Value;
 			}
 
 			// XXX: Queue code generation?

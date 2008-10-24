@@ -49,7 +49,7 @@ namespace QyotoDevelop
 				return;
 
 			ProjectFolder folder = dataObject as ProjectFolder;
-			if (folder != null && folder.Project is DotNetProject) {
+			if (folder != null && folder.Project is DotNetProject && folder.Project.ExtendedProperties["QyotoDesignInfo"] != null) {
 				QyotoDesignInfo info = QyotoDesignInfo.FromProject(folder.Project);
 				if (info.QtGuiFolder == folder.Path)
 					attributes |= NodeAttributes.Hidden;

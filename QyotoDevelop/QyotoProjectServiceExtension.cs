@@ -40,13 +40,11 @@ namespace QyotoDevelop
 				monitor.Log.WriteLine(GettextCatalog.GetString("Generating GUI code for project '{0}'...", project.Name));
 
 				foreach (QyotoForm form in info.Forms) {
-					// XXX: Create/Update form.GeneratedSourceCodeFile
-
+				 	QyotoCodeGenerator.GenerateFormCodeFile(form);
 					if (!project.IsFileInProject(form.GeneratedSourceCodeFile)) {
 						project.AddFile(form.GeneratedSourceCodeFile, BuildAction.Compile);
 					}
 				}
-				
 			}
 			
 			return base.Build(monitor, entry, configuration);

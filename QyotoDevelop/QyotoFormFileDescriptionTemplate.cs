@@ -67,7 +67,7 @@ namespace QyotoDevelop
 			m_FileTemplate.AddFileToProject(project, language, directory, name);
 			ProjectDomService.Parse(project, sourceFileName, null); // XXX: Shouldn't this be part of AddFileToProject?
 
-			QyotoDesignInfo info = QyotoDesignInfo.FromProject(project);
+			QyotoDesignInfo info = QyotoDesignInfo.FromProject(project, true);
 
 			// Create .ui file
 

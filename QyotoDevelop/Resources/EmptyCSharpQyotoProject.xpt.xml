@@ -36,8 +36,7 @@
 							</property>
 						</widget>
 					</ui>
-					<File name="MainWindow.cs" AddStandardHeader="True">
-<![CDATA[using System;
+					<File name="MainWindow.cs" AddStandardHeader="True"><![CDATA[using System;
 using Qyoto;
 
 public partial class MainWindow : QWidget
@@ -47,9 +46,26 @@ public partial class MainWindow : QWidget
 		SetupUi();
 	}
 }
-]]>
-					</File>
+]]></File>
 				</QyotoForm>
+				<File name="Main.cs" AddStandardHeader="True"><![CDATA[using System;
+using Qyoto;
+namespace ${Namespace}
+{
+	class MainClass
+	{
+		public static void Main (string[] args)
+		{
+			new QApplication(args);
+			
+			MainWindow win = new MainWindow();
+			win.Show();
+			
+			QApplication.Exec();
+		}
+	}
+}
+]]></File>
 			</Files>
 		</Project>
 	</Combine>

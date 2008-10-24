@@ -134,7 +134,7 @@ namespace QyotoDevelop
 				if (!Directory.Exists(QtGuiFolder))
 					FileService.CreateDirectory(QtGuiFolder);
 
-				foreach (QyotoForm form in m_Forms)
+				foreach (QyotoForm form in Forms)
 					form.Project = m_Project;
 				
 				m_Watcher = new FileSystemWatcher(QtGuiFolder);
