@@ -55,6 +55,9 @@ namespace QyotoDevelop
 			get {
 				return m_Form.UiFileName;
 			}
+			set {
+				m_Form.UiFileName = value;
+			}	
 		}
 		
 		[DisplayName("Class Name")]
