@@ -113,6 +113,10 @@ namespace QyotoDevelop
 			if (parentWidgetReference == null) {
 				widgetReference = new CodeThisReferenceExpression();
 			} else {
+
+				if (widgetClass == "Line")
+					widgetClass = "QFrame";
+				
 				CodeMemberField widgetField = new CodeMemberField(widgetClass, widgetName);
 				widgetField.Attributes = MemberAttributes.Family;
 				formClass.Members.Add(widgetField);
@@ -213,13 +217,16 @@ namespace QyotoDevelop
 
 		static void ParseProperties(XmlNode parentNode, CodeExpression parentObjectReference, CodeMemberMethod setupUiMethod, CodeExpression itemReference)
 		{
+			int leftMargin = 0, rightMargin = 0, topMargin = 0, bottomMargin = 0;
+			
 			foreach (XmlNode propertyNode in parentNode.SelectNodes("property")) {
 				string name = TranslatePropertyName(propertyNode.Attributes["name"].Value, false);
-				if (propertyNode.FirstChild.Name == "sizepolicy") {
-					string hpolicy = propertyNode.FirstChild.Attributes["hsizetype"].Value;
-					string vpolicy = propertyNode.FirstChild.Attributes["vsizetype"].Value;
-					int hstretch   = Convert.ToInt32(propertyNode.FirstChild.SelectSingleNode("horstretch").InnerText);
-					int vstretch   = Convert.ToInt32(propertyNode.FirstChild.SelectSingleNode("verstretch").InnerText);
+				XmlNode propertyValueNode = propertyNode.FirstChild;
+				if (propertyValueNode.Name == "sizepolicy") {
+					string hpolicy = propertyValueNode.Attributes["hsizetype"].Value;
+					string vpolicy = propertyValueNode.Attributes["vsizetype"].Value;
+					int hstretch   = Convert.ToInt32(propertyValueNode.SelectSingleNode("horstretch").InnerText);
+					int vstretch   = Convert.ToInt32(propertyValueNode.SelectSingleNode("verstretch").InnerText);
 					
 					CodeExpression hpolicyExpr = new CodeFieldReferenceExpression(new CodeTypeReferenceExpression("QSizePolicy.Policy"), hpolicy);
 					CodeExpression vpolicyExpr = new CodeFieldReferenceExpression(new CodeTypeReferenceExpression("QSizePolicy.Policy"), vpolicy);
@@ -240,11 +247,43 @@ namespace QyotoDevelop
 
 					setupUiMethod.Statements.Add(new CodeAssignStatement(new CodePropertyReferenceExpression(parentObjectReference, "SizePolicy"),
 					                                                     sizePolicyReference));
+				} else if (name == "LeftMargin") {
+					leftMargin = Convert.ToInt32(propertyValueNode.InnerText);
+				} else if (name == "RightMargin") {
+					rightMargin = Convert.ToInt32(propertyValueNode.InnerText);
+				} else if (name == "TopMargin") {
+					topMargin = Convert.ToInt32(propertyValueNode.InnerText);
+				} else if (name == "BottomMargin") {
+					bottomMargin = Convert.ToInt32(propertyValueNode.InnerText);
+				} else if (name == "Orientation" && parentNode.Attributes["class"].Value == "Line") {
+
+					CodeExpression valueExpr = null;
+					if (propertyNode.InnerText == "Qt::Vertical")
+						valueExpr = new CodeFieldReferenceExpression(new CodeTypeReferenceExpression("QFrame.Shape"), 
+						                                             "VLine");
+					else
+						valueExpr = new CodeFieldReferenceExpression(new CodeTypeReferenceExpression("QFrame.Shape"),
+						                                             "HLine");
+					
+					setupUiMethod.Statements.Add(new CodeAssignStatement(new CodePropertyReferenceExpression(itemReference, "FrameShape"),
+                                                     valueExpr));
+
+					setupUiMethod.Statements.Add(new CodeAssignStatement(new CodePropertyReferenceExpression(itemReference, "FrameShadow"),
+                                                     new CodeFieldReferenceExpression(new CodeTypeReferenceExpression("QFrame.Shadow"), "Sunken")));
+
 					
 				} else {
 					setupUiMethod.Statements.Add(new CodeAssignStatement(new CodePropertyReferenceExpression(itemReference, name), 
 					                                                     TranslatePropertyValue(propertyNode)));
 				}
+			}
+
+			if (leftMargin != 0 || topMargin != 0 || bottomMargin != 0 || rightMargin != 0) {
+				setupUiMethod.Statements.Add(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(itemReference, "SetContentsMargins"),
+				                                                            new CodePrimitiveExpression(leftMargin),
+				                                                            new CodePrimitiveExpression(topMargin),
+				                                                            new CodePrimitiveExpression(rightMargin),
+				                                                            new CodePrimitiveExpression(bottomMargin)));
 			}
 		}
 		
