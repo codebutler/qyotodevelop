@@ -192,14 +192,16 @@ namespace QyotoDevelop
 					string spacerName = itemChildNode.Attributes["name"].Value;
 					int width  = Convert.ToInt32(itemChildNode.SelectSingleNode("property[@name='sizeHint']/size/width").InnerText);
 					int height = Convert.ToInt32(itemChildNode.SelectSingleNode("property[@name='sizeHint']/size/height").InnerText);
-					string orientation = itemChildNode.SelectSingleNode("property[@name='orientation']/enum").Value;
+					string orientation = itemChildNode.SelectSingleNode("property[@name='orientation']/enum").InnerText;
 					string hpolicy, vpolicy = null;
 					if (orientation == "Qt::Vertical") {
 						hpolicy = "Minimum";
 						vpolicy = "Expanding";
-					} else {
+					} else if (orientation == "Qt::Horizontal") {
 						hpolicy = "Expanding";
 						vpolicy = "Minimum";						
+					} else {
+						throw new Exception("Unknown orientation: " + orientation);
 					}
 					CodeVariableReferenceExpression spacerReference = new CodeVariableReferenceExpression(spacerName);
 					setupUiMethod.Statements.Add(new CodeVariableDeclarationStatement("QSpacerItem", spacerName));
@@ -271,7 +273,9 @@ namespace QyotoDevelop
 					setupUiMethod.Statements.Add(new CodeAssignStatement(new CodePropertyReferenceExpression(itemReference, "FrameShadow"),
                                                      new CodeFieldReferenceExpression(new CodeTypeReferenceExpression("QFrame.Shadow"), "Sunken")));
 
-					
+				} else if (name == "Buddy") {
+					setupUiMethod.Statements.Add(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(itemReference, "SetBuddy"), 
+					                                                            TranslatePropertyValue(propertyNode)));
 				} else {
 					setupUiMethod.Statements.Add(new CodeAssignStatement(new CodePropertyReferenceExpression(itemReference, name), 
 					                                                     TranslatePropertyValue(propertyNode)));
@@ -392,6 +396,8 @@ namespace QyotoDevelop
 						result = new CodeBinaryOperatorExpression(result, CodeBinaryOperatorType.BitwiseOr, thisExpr);
 				}
 				return result;
+			case "cstring":
+				return new CodeVariableReferenceExpression(propertyValueNode.InnerText);
 			}
 			throw new Exception("Unsupported property type: " + propertyValueNode.Name);
 		}
