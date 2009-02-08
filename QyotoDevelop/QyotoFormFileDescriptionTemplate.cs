@@ -60,11 +60,11 @@ namespace QyotoDevelop
 			return Util.SupportsDesigner(project);
 		}
 
-		public override bool AddToProject (Project project, string language, string directory, string name)
+		public override bool AddToProject (MonoDevelop.Projects.SolutionItem policyParent, MonoDevelop.Projects.Project project, string language, string directory, string name)
 		{
 			// Create .cs file
-			string sourceFileName = m_FileTemplate.GetFileName(project, language, directory, name);
-			m_FileTemplate.AddFileToProject(project, language, directory, name);
+			string sourceFileName = m_FileTemplate.GetFileName(policyParent, project, language, directory, name);
+			m_FileTemplate.AddFileToProject(policyParent, project, language, directory, name);
 			ProjectDomService.Parse(project, sourceFileName, null); // XXX: Shouldn't this be part of AddFileToProject?
 
 			QyotoDesignInfo info = QyotoDesignInfo.FromProject(project, true);
