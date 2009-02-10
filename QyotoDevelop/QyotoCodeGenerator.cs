@@ -60,10 +60,10 @@ namespace QyotoDevelop
 			XmlDocument doc = new XmlDocument();
 			doc.Load(form.UiFile);			
 
-			XmlNode widgetNode = doc.SelectSingleNode("/ui/widget");
+			XmlElement widgetNode = (XmlElement)doc.SelectSingleNode("/ui/widget");
 			ParseWidget(widgetNode, setupUiMethod, type, null, null);
 
-			foreach (XmlNode node in doc.SelectNodes("/ui/connections/connection")) {
+			foreach (XmlElement node in doc.SelectNodes("/ui/connections/connection")) {
 				string sender   = node.SelectSingleNode("sender").InnerText;
 				string signal   = node.SelectSingleNode("signal").InnerText;
 				string receiver = node.SelectSingleNode("receiver").InnerText;
@@ -99,21 +99,21 @@ namespace QyotoDevelop
 			}
 		}
 
-		static void ParseWidget(XmlNode widgetNode, CodeMemberMethod setupUiMethod, CodeTypeDeclaration formClass, CodeExpression parentWidgetReference, CodeExpression parentLayoutReference)
+		static void ParseWidget(XmlElement widgetNode, CodeMemberMethod setupUiMethod, CodeTypeDeclaration formClass, CodeExpression parentWidgetReference, CodeExpression parentLayoutReference)
 		{
 			ParseWidget(widgetNode, setupUiMethod, formClass, parentWidgetReference, parentLayoutReference, null);
 		}
 		
-		static void ParseWidget(XmlNode widgetNode, CodeMemberMethod setupUiMethod, CodeTypeDeclaration formClass, CodeExpression parentWidgetReference, CodeExpression parentLayoutReference, XmlNode parentItemNode)
+		static void ParseWidget(XmlElement widgetNode, CodeMemberMethod setupUiMethod, CodeTypeDeclaration formClass, CodeExpression parentWidgetReference, CodeExpression parentLayoutReference, XmlElement parentItemNode)
 		{
-			string widgetClass = widgetNode.Attributes["class"].Value;
-			string widgetName  = widgetNode.Attributes["name"].Value;
+			string widgetClass = widgetNode.GetAttribute("class");
+			string widgetName  = widgetNode.GetAttribute("name");
 			
 			CodeExpression widgetReference;
+			
 			if (parentWidgetReference == null) {
 				widgetReference = new CodeThisReferenceExpression();
 			} else {
-
 				if (widgetClass == "Line")
 					widgetClass = "QFrame";
 				
@@ -128,47 +128,70 @@ namespace QyotoDevelop
 
 			ParseProperties(widgetNode, widgetReference, setupUiMethod, widgetReference);
 
-			XmlNode layoutNode = widgetNode.SelectSingleNode("layout");
+			XmlElement layoutNode = (XmlElement)widgetNode.SelectSingleNode("layout");
 			if (layoutNode != null) {
 				ParseLayout(layoutNode, formClass, setupUiMethod, widgetReference, null);
 			}
 
 			if (parentWidgetReference != null) {
-				if (parentItemNode == null || parentItemNode.Attributes["row"] == null || parentItemNode.Attributes["column"] == null)
-					if (parentLayoutReference != null)
+				if (parentItemNode == null || parentItemNode.Attributes["row"] == null || parentItemNode.Attributes["column"] == null) {
+					if (parentLayoutReference != null) {
 						setupUiMethod.Statements.Add(new CodeMethodInvokeExpression(parentLayoutReference, "AddWidget", widgetReference));
-					else {
-						if (widgetNode.ParentNode.Attributes["class"].Value == "QTabWidget") {
+					} else {
+						var parentWidgetNode = (XmlElement)widgetNode.ParentNode;
+						if (parentWidgetNode.GetAttribute("class") == "QTabWidget") {
 							string tabLabel = widgetNode.SelectSingleNode("attribute[@name='title']/string").InnerText;
 							setupUiMethod.Statements.Add(new CodeMethodInvokeExpression(parentWidgetReference, "AddTab", widgetReference, 
 						                                                                new CodePrimitiveExpression(tabLabel)));
-						} else
+						} else if (parentWidgetNode.GetAttribute("class") == "QScrollArea") {
+							setupUiMethod.Statements.Add(new CodeMethodInvokeExpression(parentWidgetReference, "SetWidget", widgetReference));
+						} else {
 							setupUiMethod.Statements.Add(new CodeMethodInvokeExpression(parentWidgetReference, "AddWidget", widgetReference));
+						}
 					}
-				else {
-					int row     = Convert.ToInt32(parentItemNode.Attributes["row"].Value);
-					int column  = Convert.ToInt32(parentItemNode.Attributes["column"].Value);
-					int rowSpan = 1;
-					int colSpan = 1;
-					setupUiMethod.Statements.Add(new CodeMethodInvokeExpression(parentLayoutReference, 
-						                                                        "AddWidget",
-						                                                         widgetReference,
-						                                                         new CodePrimitiveExpression(row),
-						                                                         new CodePrimitiveExpression(column),
-						                                                         new CodePrimitiveExpression(rowSpan),
-						                                                         new CodePrimitiveExpression(colSpan)));
+				} else {					
+					int row    = Convert.ToInt32(parentItemNode.GetAttribute("row"));
+					int column = Convert.ToInt32(parentItemNode.GetAttribute("column"));
+					
+					var parentLayoutNode = (XmlElement)parentItemNode.ParentNode;
+					if (parentLayoutNode.GetAttribute("class") == "QFormLayout") {
+						if (column == 1) {
+							// Find matching label widget for this row.
+							var labelWidgetNode = (XmlElement)parentItemNode.ParentNode.SelectSingleNode("item[@row='" + row + "' and @column='0']/widget");
+							if (labelWidgetNode == null)
+								throw new Exception("No matching label widget found!");
+							
+							var labelWidgetReference = new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), 
+							                                                            labelWidgetNode.GetAttribute("name"));
+						
+							setupUiMethod.Statements.Add(new CodeMethodInvokeExpression(parentLayoutReference, "InsertRow",
+							                                                            new CodePrimitiveExpression(row),
+							                                                            labelWidgetReference,
+							                                                            widgetReference));
+						}
+					} else {
+						int rowSpan = 1;
+						int colSpan = 1;
+						setupUiMethod.Statements.Add(new CodeMethodInvokeExpression(parentLayoutReference, 
+							                                                        "AddWidget",
+							                                                         widgetReference,
+							                                                         new CodePrimitiveExpression(row),
+							                                                         new CodePrimitiveExpression(column),
+							                                                         new CodePrimitiveExpression(rowSpan),
+							                                                         new CodePrimitiveExpression(colSpan)));
+					}
 				}
 			}
 
-			foreach (XmlNode childWidgetNode in widgetNode.SelectNodes("widget")) {
+			foreach (XmlElement childWidgetNode in widgetNode.SelectNodes("widget")) {
 				ParseWidget(childWidgetNode, setupUiMethod, formClass, widgetReference, null);
 			}
 		}
 
-		static void ParseLayout(XmlNode layoutNode, CodeTypeDeclaration formClass, CodeMemberMethod setupUiMethod, CodeExpression widgetReference, CodeExpression parentLayout)
+		static void ParseLayout(XmlElement layoutNode, CodeTypeDeclaration formClass, CodeMemberMethod setupUiMethod, CodeExpression widgetReference, CodeExpression parentLayout)
 		{
-			string layoutName  = layoutNode.Attributes["name"].Value;
-			string layoutClass = layoutNode.Attributes["class"].Value;
+			string layoutName  = layoutNode.GetAttribute("name");
+			string layoutClass = layoutNode.GetAttribute("class");
 
 			CodeVariableReferenceExpression layoutReference = new CodeVariableReferenceExpression(layoutName);
 
@@ -182,14 +205,14 @@ namespace QyotoDevelop
 			
 			ParseProperties(layoutNode, layoutReference, setupUiMethod, layoutReference);
 
-			foreach (XmlNode itemNode in layoutNode.SelectNodes("item")) {
-				XmlNode itemChildNode = itemNode.FirstChild;
+			foreach (XmlElement itemNode in layoutNode.SelectNodes("item")) {
+				XmlElement itemChildNode = (XmlElement)itemNode.FirstChild;
 				if (itemChildNode.Name == "widget")
 					ParseWidget(itemChildNode, setupUiMethod, formClass, widgetReference, layoutReference, itemNode);
 				else if (itemChildNode.Name == "layout")
 					ParseLayout(itemChildNode, formClass, setupUiMethod, widgetReference, layoutReference);
 				else if (itemChildNode.Name == "spacer") {
-					string spacerName = itemChildNode.Attributes["name"].Value;
+					string spacerName = itemChildNode.GetAttribute("name");
 					int width  = Convert.ToInt32(itemChildNode.SelectSingleNode("property[@name='sizeHint']/size/width").InnerText);
 					int height = Convert.ToInt32(itemChildNode.SelectSingleNode("property[@name='sizeHint']/size/height").InnerText);
 					string orientation = itemChildNode.SelectSingleNode("property[@name='orientation']/enum").InnerText;
@@ -217,16 +240,16 @@ namespace QyotoDevelop
 			}
 		}
 
-		static void ParseProperties(XmlNode parentNode, CodeExpression parentObjectReference, CodeMemberMethod setupUiMethod, CodeExpression itemReference)
+		static void ParseProperties(XmlElement parentNode, CodeExpression parentObjectReference, CodeMemberMethod setupUiMethod, CodeExpression itemReference)
 		{
 			int leftMargin = 0, rightMargin = 0, topMargin = 0, bottomMargin = 0;
 			
-			foreach (XmlNode propertyNode in parentNode.SelectNodes("property")) {
-				string name = TranslatePropertyName(propertyNode.Attributes["name"].Value, false);
-				XmlNode propertyValueNode = propertyNode.FirstChild;
+			foreach (XmlElement propertyNode in parentNode.SelectNodes("property")) {
+				string name = TranslatePropertyName(propertyNode.GetAttribute("name"), false);
+				XmlElement propertyValueNode = (XmlElement)propertyNode.FirstChild;
 				if (propertyValueNode.Name == "sizepolicy") {
-					string hpolicy = propertyValueNode.Attributes["hsizetype"].Value;
-					string vpolicy = propertyValueNode.Attributes["vsizetype"].Value;
+					string hpolicy = propertyValueNode.GetAttribute("hsizetype");
+					string vpolicy = propertyValueNode.GetAttribute("vsizetype");
 					int hstretch   = Convert.ToInt32(propertyValueNode.SelectSingleNode("horstretch").InnerText);
 					int vstretch   = Convert.ToInt32(propertyValueNode.SelectSingleNode("verstretch").InnerText);
 					
@@ -236,7 +259,7 @@ namespace QyotoDevelop
 					//CodeExpression sizePolicyReference = new CodePropertyReferenceExpression(itemReference, "SizePolicy");
 					//setupUiMethod.Statements.Add(new CodeAssignStatement(sizePolicyReference, new CodeObjectCreateExpression("QSizePolicy", hpolicyExpr, vpolicyExpr)));
 					
-					string objectName = parentNode.Attributes["name"].Value;
+					string objectName = parentNode.GetAttribute("name");
 					setupUiMethod.Statements.Add(new CodeVariableDeclarationStatement("QSizePolicy", objectName + "_sizePolicy"));
 					CodeExpression sizePolicyReference = new CodeVariableReferenceExpression(objectName + "_sizePolicy");
 					setupUiMethod.Statements.Add(new CodeAssignStatement(sizePolicyReference, new CodeObjectCreateExpression("QSizePolicy", hpolicyExpr, vpolicyExpr)));
@@ -257,7 +280,7 @@ namespace QyotoDevelop
 					topMargin = Convert.ToInt32(propertyValueNode.InnerText);
 				} else if (name == "BottomMargin") {
 					bottomMargin = Convert.ToInt32(propertyValueNode.InnerText);
-				} else if (name == "Orientation" && parentNode.Attributes["class"].Value == "Line") {
+				} else if (name == "Orientation" && parentNode.GetAttribute("class") == "Line") {
 
 					CodeExpression valueExpr = null;
 					if (propertyNode.InnerText == "Qt::Vertical")
@@ -305,6 +328,7 @@ namespace QyotoDevelop
 			    "dragDropMode",
 			    "dragMode",
 			    "echoMode",
+				"fieldGrowthPolicy",
 			    "fileMode",
 			    "flow",
 			    "horizontalHeaderFormat",
@@ -341,9 +365,9 @@ namespace QyotoDevelop
 				return cname.Substring(0,1).ToUpper() + cname.Substring(1);
 		}
 	
-		static CodeExpression TranslatePropertyValue (XmlNode propertyNode)
+		static CodeExpression TranslatePropertyValue (XmlElement propertyNode)
 		{
-			XmlNode propertyValueNode = propertyNode.FirstChild;
+			XmlElement propertyValueNode = (XmlElement)propertyNode.FirstChild;
 			
 			switch (propertyValueNode.Name) {
 			case "string":
@@ -371,11 +395,15 @@ namespace QyotoDevelop
 					string val = propertyValueNode.InnerText;
 					if (val.Contains("::")) {
 						string className = val.Substring(0, val.IndexOf("::"));
-						string enumName = TranslatePropertyName(propertyNode.Attributes["name"].Value, true);
+						string enumName = TranslatePropertyName(propertyNode.GetAttribute("name"), true);
 						if (enumName == "FrameShadow")
 							enumName = "Shadow";
 						else if (enumName == "FrameShape")
 							enumName = "Shape";
+						else if (enumName == "HorizontalScrollBarPolicy")
+							enumName = "ScrollBarPolicy";
+						else if (enumName == "VerticalScrollBarPolicy")
+							enumName = "ScrollBarPolicy";
 						string enumValue = val.Substring(val.IndexOf("::") + 2);
 				 		return new CodeFieldReferenceExpression(new CodeTypeReferenceExpression(String.Format("{0}.{1}", className, enumName)), enumValue);
 					} else {
