@@ -1,4 +1,8 @@
-QyotoDevelop/bin
+bin/
+autom4te.cache/
+configure
+Makefile
+Makefile.in
 *.pidb
 *.userprefs
 *.usertasks
