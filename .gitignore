@@ -1,5 +1,6 @@
 bin/
 autom4te.cache/
+qyotodevelop.pc
 configure
 Makefile
 Makefile.in

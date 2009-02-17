@@ -42,6 +42,7 @@ AC_SUBST(BUILD_DIR)
 AC_CONFIG_FILES([
 Makefile
 QyotoDevelop/Makefile
+QyotoDevelop/qyotodevelop.pc
 ])
 
 AC_OUTPUT

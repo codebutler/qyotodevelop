@@ -3,12 +3,9 @@
 FILES =  \
 	AssemblyInfo.cs \
 	Commands.cs \
-	CSharpQyotoProjectBinding.cs \
 	EventyList.cs \
-	FormsFolder.cs \
 	ProjectFolderNodeBuilder.cs \
 	ProjectNodeBuilder.cs \
-	QyotoCodeFileDescriptionTemplate.cs \
 	QyotoCodeGenerator.cs \
 	QyotoCommandHandler.cs \
 	QyotoDesignInfo.cs \
@@ -18,7 +15,6 @@ FILES =  \
 	QyotoFormPropertyDescriptor.cs \
 	QyotoFormPropertyProvider.cs \
 	QyotoFormsFolderNodeBuilder.cs \
-	QyotoProject.cs \
 	QyotoProjectFeatures.cs \
 	QyotoProjectServiceExtension.cs \
 	QyotoStartupCommand.cs \
