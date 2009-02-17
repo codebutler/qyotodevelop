@@ -4,7 +4,7 @@ q2s=$(subst ?,\ ,$1)
 unesc2=$(subst ?, ,$1)
 
 # install assembly
-pkglibdir = $(prefix)/lib/monodevelop/AddIns/
+pkglibdir = $(prefix)/lib/monodevelop/AddIns/QyotoDevelop
 pkglib_SCRIPTS = $(ASSEMBLY) $(ASSEMBLY).mdb
 
 # install .pc files

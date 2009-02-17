@@ -99,4 +99,21 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Dialog.xft.xml">
+      <LogicalName>Dialog.xft.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\EmptyCSharpQyotoProject.xpt.xml">
+      <LogicalName>EmptyCSharpQyotoProject.xpt.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\MainWindow.xft.xml">
+      <LogicalName>MainWindow.xft.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\QyotoDevelop.addin.xml">
+      <LogicalName>QyotoDevelop.addin.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Widget.xft.xml">
+      <LogicalName>Widget.xft.xml</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>

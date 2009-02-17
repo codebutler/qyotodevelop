@@ -21,7 +21,12 @@ FILES =  \
 	ReferenceManager.cs \
 	Util.cs
 
-RESOURCES = 
+RESOURCES =  \
+	Resources/Dialog.xft.xml \
+	Resources/EmptyCSharpQyotoProject.xpt.xml \
+	Resources/MainWindow.xft.xml \
+	Resources/QyotoDevelop.addin.xml \
+	Resources/Widget.xft.xml 
 
 REFERENCES =  \
 	$(GTK_SHARP_20_LIBS) \
