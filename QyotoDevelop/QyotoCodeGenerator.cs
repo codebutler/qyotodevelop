@@ -158,16 +158,31 @@ namespace QyotoDevelop
 						if (column == 1) {
 							// Find matching label widget for this row.
 							var labelWidgetNode = (XmlElement)parentItemNode.ParentNode.SelectSingleNode("item[@row='" + row + "' and @column='0']/widget");
-							if (labelWidgetNode == null)
-								throw new Exception("No matching label widget found!");
-							
-							var labelWidgetReference = new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), 
-							                                                            labelWidgetNode.GetAttribute("name"));
+							if (labelWidgetNode != null) {
+								var labelWidgetReference = new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), 
+							    	                                                        labelWidgetNode.GetAttribute("name"));
 						
-							setupUiMethod.Statements.Add(new CodeMethodInvokeExpression(parentLayoutReference, "InsertRow",
+								setupUiMethod.Statements.Add(new CodeMethodInvokeExpression(parentLayoutReference, "InsertRow",
+								                                                            new CodePrimitiveExpression(row),
+								                                                            labelWidgetReference,
+								                                                            widgetReference));									
+							} else {
+								setupUiMethod.Statements.Add(new CodeMethodInvokeExpression(parentLayoutReference, "InsertRow",
+								                                                            new CodePrimitiveExpression(row),
+								                                                            new CodeCastExpression("QWidget", new CodePrimitiveExpression(null)),
+								                                                            widgetReference));
+							}
+						} else if (column == 0) {
+							// Check to see if there's a field for this row. If not, add the label by its self.
+							var fieldWidgetNode = (XmlElement)parentItemNode.ParentNode.SelectSingleNode("item[@row='" + row + "' and @column='1']/widget");
+							if (fieldWidgetNode == null) {
+								//var fieldWidgetReference = new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),
+								  //                                                          fieldWidgetNode.GetAttribute("name"));
+								setupUiMethod.Statements.Add(new CodeMethodInvokeExpression(parentLayoutReference, "InsertRow",
 							                                                            new CodePrimitiveExpression(row),
-							                                                            labelWidgetReference,
-							                                                            widgetReference));
+							                                                            widgetReference,
+							                                                            new CodeCastExpression("QWidget", new CodePrimitiveExpression(null))));
+							}
 						}
 					} else {
 						int rowSpan = 1;
