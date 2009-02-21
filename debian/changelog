@@ -1,3 +1,9 @@
+qyotodevelop (0.3-0~ppa1) intrepid; urgency=low
+
+  * Update to 0.3...
+
+ -- Eric Butler <eric@extremeboredom.net>  Sat, 21 Feb 2009 14:20:01 -0800
+
 qyotodevelop (0.2-0~ppa0) intrepid; urgency=low
 
   * Fix adding layouts inside grid layouts.

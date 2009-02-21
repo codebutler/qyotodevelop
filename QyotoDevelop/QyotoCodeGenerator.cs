@@ -163,8 +163,8 @@ namespace QyotoDevelop
 						                                                            roleExpression,
 						                                                            widgetReference));		
 					} else {
-						int rowSpan = 1;
-						int colSpan = 1;
+						var colSpan = parentItemNode.Attributes["colspan"] != null ? Convert.ToInt32(parentItemNode.GetAttribute("colspan")) : 1;
+						var rowSpan = parentItemNode.Attributes["rowspan"] != null ? Convert.ToInt32(parentItemNode.GetAttribute("rowspan")) : 1;
 						setupUiMethod.Statements.Add(new CodeMethodInvokeExpression(parentLayoutReference, 
 							                                                        "AddWidget",
 							                                                         widgetReference,
@@ -198,7 +198,7 @@ namespace QyotoDevelop
 					int row     = Convert.ToInt32(parentItemNode.GetAttribute("row"));
 					int column  = Convert.ToInt32(parentItemNode.GetAttribute("column"));
 					var colSpan = parentItemNode.Attributes["colspan"] != null ? Convert.ToInt32(parentItemNode.GetAttribute("colspan")) : 1;
-					var rowSpan = parentItemNode.Attributes["rowspan"] != null ? Convert.ToInt32(parentItemNode.GetAttribute("rowSpan")) : 1;
+					var rowSpan = parentItemNode.Attributes["rowspan"] != null ? Convert.ToInt32(parentItemNode.GetAttribute("rowspan")) : 1;
 					setupUiMethod.Statements.Add(new CodeMethodInvokeExpression(parentLayout, "AddLayout", layoutReference,
 												    new CodePrimitiveExpression(row),
 												    new CodePrimitiveExpression(column),
