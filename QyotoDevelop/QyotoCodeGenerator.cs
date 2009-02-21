@@ -191,7 +191,22 @@ namespace QyotoDevelop
 			setupUiMethod.Statements.Add(new CodeVariableDeclarationStatement(layoutClass, layoutName));
 			if (parentLayout != null) {
 				setupUiMethod.Statements.Add(new CodeAssignStatement(layoutReference, new CodeObjectCreateExpression(layoutClass)));
-				setupUiMethod.Statements.Add(new CodeMethodInvokeExpression(parentLayout, "AddLayout", layoutReference));
+
+				var parentItemNode = (XmlElement)layoutNode.ParentNode;
+				var parentLayoutNode = (XmlElement)parentItemNode.ParentNode;
+				if (parentLayoutNode.GetAttribute("class") == "QGridLayout") {
+					int row     = Convert.ToInt32(parentItemNode.GetAttribute("row"));
+					int column  = Convert.ToInt32(parentItemNode.GetAttribute("column"));
+					var colSpan = parentItemNode.Attributes["colspan"] != null ? Convert.ToInt32(parentItemNode.GetAttribute("colspan")) : 1;
+					var rowSpan = parentItemNode.Attributes["rowspan"] != null ? Convert.ToInt32(parentItemNode.GetAttribute("rowSpan")) : 1;
+					setupUiMethod.Statements.Add(new CodeMethodInvokeExpression(parentLayout, "AddLayout", layoutReference,
+												    new CodePrimitiveExpression(row),
+												    new CodePrimitiveExpression(column),
+												    new CodePrimitiveExpression(rowSpan),
+												    new CodePrimitiveExpression(colSpan)));
+				} else {
+					setupUiMethod.Statements.Add(new CodeMethodInvokeExpression(parentLayout, "AddLayout", layoutReference));
+				}
 			} else {
 				setupUiMethod.Statements.Add(new CodeAssignStatement(layoutReference, new CodeObjectCreateExpression(layoutClass, widgetReference)));
 			}
@@ -321,7 +336,7 @@ namespace QyotoDevelop
 			    "dragDropMode",
 			    "dragMode",
 			    "echoMode",
-				"fieldGrowthPolicy",
+			    "fieldGrowthPolicy",
 			    "fileMode",
 			    "flow",
 			    "horizontalHeaderFormat",
