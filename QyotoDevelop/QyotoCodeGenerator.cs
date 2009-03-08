@@ -139,11 +139,11 @@ namespace QyotoDevelop
 						setupUiMethod.Statements.Add(new CodeMethodInvokeExpression(parentLayoutReference, "AddWidget", widgetReference));
 					} else {
 						var parentWidgetNode = (XmlElement)widgetNode.ParentNode;
-						if (parentWidgetNode.GetAttribute("class") == "QTabWidget") {
+						if (GetClassName(parentWidgetNode) == "QTabWidget") {
 							string tabLabel = widgetNode.SelectSingleNode("attribute[@name='title']/string").InnerText;
 							setupUiMethod.Statements.Add(new CodeMethodInvokeExpression(parentWidgetReference, "AddTab", widgetReference, 
 						                                                                new CodePrimitiveExpression(tabLabel)));
-						} else if (parentWidgetNode.GetAttribute("class") == "QScrollArea") {
+						} else if (GetClassName(parentWidgetNode) == "QScrollArea") {
 							setupUiMethod.Statements.Add(new CodeMethodInvokeExpression(parentWidgetReference, "SetWidget", widgetReference));
 						} else {
 							setupUiMethod.Statements.Add(new CodeMethodInvokeExpression(parentWidgetReference, "AddWidget", widgetReference));
@@ -154,7 +154,7 @@ namespace QyotoDevelop
 					int column = Convert.ToInt32(parentItemNode.GetAttribute("column"));
 					
 					var parentLayoutNode = (XmlElement)parentItemNode.ParentNode;
-					if (parentLayoutNode.GetAttribute("class") == "QFormLayout") {
+					if (GetClassName(parentLayoutNode) == "QFormLayout") {
 						
 						var roleName = (column == 0) ? "LabelRole" : "FieldRole";
 						var roleExpression = new CodeFieldReferenceExpression(new CodeTypeReferenceExpression("QFormLayout.ItemRole"), roleName);
@@ -436,6 +436,15 @@ namespace QyotoDevelop
 				return new CodeVariableReferenceExpression(propertyValueNode.InnerText);
 			}
 			throw new Exception("Unsupported property type: " + propertyValueNode.Name);
+		}
+
+		static string GetClassName (XmlElement node)
+		{
+			var className = node.GetAttribute("class");
+			var custom = node.OwnerDocument.SelectSingleNode(String.Format("/ui/customwidgets/customwidget[class='{0}']", className));
+			if (custom != null)
+				className = custom["extends"].InnerText;
+			return className;
 		}
 	}
 }

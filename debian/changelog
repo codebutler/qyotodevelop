@@ -1,3 +1,9 @@
+qyotodevelop (0.4-0~ppa0) intrepid; urgency=low
+
+  * Added support for subclassed widgets.
+
+ -- Eric Butler <eric@extremeboredom.net>  Sun, 08 Mar 2009 16:32:03 -0700
+
 qyotodevelop (0.3-0~ppa1) intrepid; urgency=low
 
   * Update to 0.3...
