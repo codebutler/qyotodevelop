@@ -242,7 +242,22 @@ namespace QyotoDevelop
 					                                                                                    new CodePrimitiveExpression(height),
 					                                                                                    new CodeFieldReferenceExpression(new CodeTypeReferenceExpression("QSizePolicy.Policy"), hpolicy), 
 					                                                                                    new CodeFieldReferenceExpression(new CodeTypeReferenceExpression("QSizePolicy.Policy"), vpolicy))));
-					setupUiMethod.Statements.Add(new CodeMethodInvokeExpression(layoutReference, "AddItem", spacerReference));
+
+					if (layoutNode.GetAttribute("class") == "QGridLayout") {
+						int row     = Convert.ToInt32(itemNode.GetAttribute("row"));
+						int column  = Convert.ToInt32(itemNode.GetAttribute("column"));
+						var colSpan = itemNode.Attributes["colspan"] != null ? Convert.ToInt32(itemNode.GetAttribute("colspan")) : 1;
+						var rowSpan = itemNode.Attributes["rowspan"] != null ? Convert.ToInt32(itemNode.GetAttribute("rowspan")) : 1;
+						setupUiMethod.Statements.Add(new CodeMethodInvokeExpression(layoutReference, 
+													    "AddItem",
+													    spacerReference,
+													    new CodePrimitiveExpression(row),
+													    new CodePrimitiveExpression(column),
+													    new CodePrimitiveExpression(rowSpan),
+													    new CodePrimitiveExpression(colSpan)));
+					} else {
+						setupUiMethod.Statements.Add(new CodeMethodInvokeExpression(layoutReference, "AddItem", spacerReference));
+					}
 				} else
 					throw new Exception(String.Format("Failed to generate {0}. Expected <widget> or <layout>. Got: {1}", formClass.Name, itemChildNode.Name));
 			}
