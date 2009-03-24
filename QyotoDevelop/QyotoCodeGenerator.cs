@@ -30,9 +30,16 @@ using System.Xml;
 
 namespace QyotoDevelop
 {
-	public static class QyotoCodeGenerator
+	public class QyotoCodeGenerator
 	{		
 		public static void GenerateFormCodeFile(QyotoForm form)
+		{
+			new QyotoCodeGenerator(form);
+		}
+		
+		List<CodeExpression> m_SetBuddyExpressions = new List<CodeExpression>();
+		
+		QyotoCodeGenerator (QyotoForm form)
 		{
 			CodeCompileUnit unit = new CodeCompileUnit();
 
@@ -92,6 +99,10 @@ namespace QyotoDevelop
 			setupUiMethod.Statements.Add(new CodeMethodInvokeExpression(new CodeTypeReferenceExpression("QMetaObject"),
 			                                                            "ConnectSlotsByName",
 			                                                            new CodeThisReferenceExpression()));
+			
+			foreach (var expr in m_SetBuddyExpressions) {
+				setupUiMethod.Statements.Add(expr);
+			}
 
 			using (TextWriter writer = new StreamWriter(form.GeneratedSourceCodeFile)) {
 				CodeDomProvider provider = form.Project.LanguageBinding.GetCodeDomProvider();
@@ -99,12 +110,12 @@ namespace QyotoDevelop
 			}
 		}
 
-		static void ParseWidget(XmlElement widgetNode, CodeMemberMethod setupUiMethod, CodeTypeDeclaration formClass, CodeExpression parentWidgetReference, CodeExpression parentLayoutReference)
+		void ParseWidget(XmlElement widgetNode, CodeMemberMethod setupUiMethod, CodeTypeDeclaration formClass, CodeExpression parentWidgetReference, CodeExpression parentLayoutReference)
 		{
 			ParseWidget(widgetNode, setupUiMethod, formClass, parentWidgetReference, parentLayoutReference, null);
 		}
 		
-		static void ParseWidget(XmlElement widgetNode, CodeMemberMethod setupUiMethod, CodeTypeDeclaration formClass, CodeExpression parentWidgetReference, CodeExpression parentLayoutReference, XmlElement parentItemNode)
+		void ParseWidget(XmlElement widgetNode, CodeMemberMethod setupUiMethod, CodeTypeDeclaration formClass, CodeExpression parentWidgetReference, CodeExpression parentLayoutReference, XmlElement parentItemNode)
 		{
 			string widgetClass = widgetNode.GetAttribute("class");
 			string widgetName  = widgetNode.GetAttribute("name");
@@ -181,7 +192,7 @@ namespace QyotoDevelop
 			}
 		}
 
-		static void ParseLayout(XmlElement layoutNode, CodeTypeDeclaration formClass, CodeMemberMethod setupUiMethod, CodeExpression widgetReference, CodeExpression parentLayout)
+		void ParseLayout(XmlElement layoutNode, CodeTypeDeclaration formClass, CodeMemberMethod setupUiMethod, CodeExpression widgetReference, CodeExpression parentLayout)
 		{
 			string layoutName  = layoutNode.GetAttribute("name");
 			string layoutClass = layoutNode.GetAttribute("class");
@@ -263,7 +274,7 @@ namespace QyotoDevelop
 			}
 		}
 
-		static void ParseProperties(XmlElement parentNode, CodeExpression parentObjectReference, CodeMemberMethod setupUiMethod, CodeExpression itemReference)
+		void ParseProperties(XmlElement parentNode, CodeExpression parentObjectReference, CodeMemberMethod setupUiMethod, CodeExpression itemReference)
 		{
 			int leftMargin = 0, rightMargin = 0, topMargin = 0, bottomMargin = 0;
 			
@@ -320,8 +331,8 @@ namespace QyotoDevelop
                                                      new CodeFieldReferenceExpression(new CodeTypeReferenceExpression("QFrame.Shadow"), "Sunken")));
 
 				} else if (name == "Buddy") {
-					setupUiMethod.Statements.Add(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(itemReference, "SetBuddy"), 
-					                                                            TranslatePropertyValue(propertyNode)));
+					m_SetBuddyExpressions.Add(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(itemReference, "SetBuddy"), 
+					                                                         TranslatePropertyValue(propertyNode)));
 				} else {
 					setupUiMethod.Statements.Add(new CodeAssignStatement(new CodePropertyReferenceExpression(itemReference, name), 
 					                                                     TranslatePropertyValue(propertyNode)));
@@ -337,7 +348,7 @@ namespace QyotoDevelop
 			}
 		}
 		
-		static string TranslatePropertyName (string cname, bool alwaysUppercaseFirstLetter)
+		string TranslatePropertyName (string cname, bool alwaysUppercaseFirstLetter)
 		{
 			List<string> lowerCasePropertyNames = new List<string>();
 			lowerCasePropertyNames.AddRange(new string[] {
@@ -388,7 +399,7 @@ namespace QyotoDevelop
 				return cname.Substring(0,1).ToUpper() + cname.Substring(1);
 		}
 	
-		static CodeExpression TranslatePropertyValue (XmlElement propertyNode)
+		CodeExpression TranslatePropertyValue (XmlElement propertyNode)
 		{
 			XmlElement propertyValueNode = (XmlElement)propertyNode.FirstChild;
 			
@@ -453,7 +464,7 @@ namespace QyotoDevelop
 			throw new Exception("Unsupported property type: " + propertyValueNode.Name);
 		}
 
-		static string GetClassName (XmlElement node)
+		string GetClassName (XmlElement node)
 		{
 			var className = node.GetAttribute("class");
 			var custom = node.OwnerDocument.SelectSingleNode(String.Format("/ui/customwidgets/customwidget[class='{0}']", className));
