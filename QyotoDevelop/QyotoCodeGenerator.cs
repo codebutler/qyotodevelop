@@ -188,6 +188,18 @@ namespace QyotoDevelop
 				}
 			}
 
+			if (widgetClass == "QComboBox") {
+				List<CodeExpression> itemTextExpressions = new List<CodeExpression>();
+				foreach (XmlElement itemElement in widgetNode.GetElementsByTagName("item")) {
+					string text = itemElement.SelectSingleNode("property[@name='text']").InnerText;
+					itemTextExpressions.Add(new CodePrimitiveExpression(text));
+				}
+				
+				m_SetupUiMethod.Statements.Add(new CodeMethodInvokeExpression(widgetReference, "InsertItems",
+				                                                              new CodePrimitiveExpression(0),
+				                                                              new CodeObjectCreateExpression(typeof (List<string>), new CodeArrayCreateExpression(typeof(string[]), itemTextExpressions.ToArray()))));
+			}
+			
 			foreach (XmlElement childWidgetNode in widgetNode.SelectNodes("widget")) {
 				ParseWidget(childWidgetNode, formClass, widgetReference, null);
 			}
