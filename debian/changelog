@@ -1,8 +1,15 @@
-qyotodevelop (0.4-0~ppa0) intrepid; urgency=low
+qyotodevelop (0.5-0~ppa0) jaunty; urgency=low
+
+  * Update for MD 1.9.3.
+  * Try to avoid crash with new projects.
+
+ -- Eric Butler <eric@extremeboredom.net>  Mon, 23 Mar 2009 19:20:20 -0700
+
+qyotodevelop (0.4-0~ppa0) jaunty; urgency=low
 
   * Added support for subclassed widgets.
 
- -- Eric Butler <eric@extremeboredom.net>  Sun, 08 Mar 2009 16:32:03 -0700
+ -- Eric Butler <eric@extremeboredom.net>  Mon, 23 Mar 2009 19:20:17 -0700
 
 qyotodevelop (0.3-0~ppa1) intrepid; urgency=low
 

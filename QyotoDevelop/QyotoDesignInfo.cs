@@ -118,8 +118,11 @@ namespace QyotoDevelop
 		public DotNetProject Project {
 			get { return m_Project; }
 			set {
-				if (m_Project != null)
-					throw new InvalidOperationException("Project already set.");
+				if (m_Project != null) {
+					if (m_Project != value)
+						throw new InvalidOperationException("Different project already set!");
+					return;
+				}
 	
 				if (value == null)
 					throw new ArgumentNullException("project");
