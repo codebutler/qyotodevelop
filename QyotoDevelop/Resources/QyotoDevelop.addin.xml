@@ -6,7 +6,7 @@
        url         = "http://www.extremeboredom.net"
        description = "Qyoto (Qt) toolkit support"
        category    = "Other"
-       version     = "0.1">
+       version     = "0.6">
 
     <Runtime>
         <Import assembly = "QyotoDevelop.dll"/>

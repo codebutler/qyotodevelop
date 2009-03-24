@@ -1,3 +1,10 @@
+qyotodevelop (0.6-0~ppa0) jaunty; urgency=low
+
+  * Fix widget buddies
+  * Add support for QComboBox items
+
+ -- Eric Butler <eric@extremeboredom.net>  Tue, 24 Mar 2009 10:42:32 -0700
+
 qyotodevelop (0.5-0~ppa0) jaunty; urgency=low
 
   * Update for MD 1.9.3.
