@@ -104,7 +104,7 @@ namespace QyotoDevelop
 				foreach (IType cls in dom.Types)
 					if (cls.FullName == m_ClassName)
 						foreach (IType part in cls.Parts)
-							if (part.CompilationUnit != null && !part.CompilationUnit.FileName.StartsWith(guiFolder))
+							if (part.CompilationUnit != null && !part.CompilationUnit.FileName.FileName.StartsWith(guiFolder))
 								return part.CompilationUnit.FileName;
 				return null;
 			}

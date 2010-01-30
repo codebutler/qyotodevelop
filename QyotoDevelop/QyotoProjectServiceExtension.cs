@@ -30,7 +30,7 @@ namespace QyotoDevelop
 {
 	public class QyotoProjectServiceExtension : ProjectServiceExtension
 	{
-		protected override BuildResult Build (IProgressMonitor monitor, SolutionEntityItem entry, string configuration)
+		protected override BuildResult Build (IProgressMonitor monitor, SolutionEntityItem entry, ConfigurationSelector configuration)
 		{
 			DotNetProject project = (DotNetProject)entry;
 

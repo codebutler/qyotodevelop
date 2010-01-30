@@ -58,7 +58,7 @@ namespace QyotoDevelop
 		{
 			QyotoForm form = (QyotoForm)dataObject;
 			label = form.ClassName;
-			icon = IdeApp.Services.Resources.GetIcon ("md-gtkcore-widget", Gtk.IconSize.Menu);			
+			icon = ImageService.GetPixbuf ("md-gtkcore-widget", Gtk.IconSize.Menu);			
 		}
 
 		public override string ContextMenuAddinPath {
